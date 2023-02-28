@@ -7,7 +7,22 @@
     <link rel="stylesheet" href="./static/css/index.css" />
   </head>
   <body>
+    <h1>Gomoku</h1>
     <div id="board-container"></div>
-    <script src="./static/js/index.js"></script>
+    <div class="message"></div>
+    <div class="button-container">
+      <button id="restart-btn">Restart</button>
+      <button id="undo-btn" disabled>Undo</button>
+      <button id="redo-btn" disabled>Redo</button>
+    </div>
+    <div class="difficulty-container">
+      <label>Difficulty:</label>
+      <select id="difficulty-select">
+        <option value="1">Easy</option>
+        <option value="2" selected>Normal</option>
+        <option value="3">Hard</option>
+      </select>
+    </div>
+    <script type="module" src="./static/js/index.js"></script>
   </body>
 </html>
