@@ -1,65 +1,78 @@
-export function checkWin(grids) {
-	console.log(grids);
-  // 检查横向
-  for (let i = 0; i < 14; i++) {
-    for (let j = 0; j <= 9; j++) {
-      if (
-        grids[i][j] !== null &&
-        grids[i][j] === grids[i][j + 1] &&
-        grids[i][j] === grids[i][j + 2] &&
-        grids[i][j] === grids[i][j + 3] &&
-        grids[i][j] === grids[i][j + 4]
-      ) {
-        return grids[i][j];
-      }
-    }
+export function checkWin(row,col,color,grids,size) {
+  if (checkRow(row,col,color,grids,size) || checkCol(row,col,color,grids,size) || checkLeftTopToRightBottom(row,col,color,grids,size) || checkRightTopToLeftBottom(row,col,color,grids,size)) {
+    return true;
   }
+  return false;
+}
 
-  // 检查纵向
-  for (let i = 0; i <= 10; i++) {
-    for (let j = 0; j < 15; j++) {
-      if (
-        grids[i][j] !== null &&
-        grids[i][j] === grids[i + 1][j] &&
-        grids[i][j] === grids[i + 2][j] &&
-        grids[i][j] === grids[i + 3][j] &&
-        grids[i][j] === grids[i + 4][j]
-      ) {
-        return grids[i][j];
-      }
-    }
+//检查行是否有五个相同的棋子
+function checkRow(row,col,color,grids,size) {
+  let count = 1;
+  let x = col - 1,
+      y = col + 1;
+  while (x >= 0 && grids[row][x] === color) {
+    count++;
+    x--;
   }
-
-  // 检查左上到右下斜线
-  for (let i = 0; i <= 10; i++) {
-    for (let j = 0; j <= 10; j++) {
-      if (
-        grids[i][j] !== null &&
-        grids[i][j] === grids[i + 1][j + 1] &&
-        grids[i][j] === grids[i + 2][j + 2] &&
-        grids[i][j] === grids[i + 3][j + 3] &&
-        grids[i][j] === grids[i + 4][j + 4]
-      ) {
-        return grids[i][j];
-      }
-    }
+  while (y < size && grids[row][y] === color) {
+    count++;
+    y++;
   }
+  return count >= 5;
+}
 
-  // 检查左下到右上斜线
-  for (let i = 4; i < 15; i++) {
-    for (let j = 0; j <= 10; j++) {
-      if (
-        grids[i][j] !== null &&
-        grids[i][j] === grids[i - 1][j + 1] &&
-        grids[i][j] === grids[i - 2][j + 2] &&
-        grids[i][j] === grids[i - 3][j + 3] &&
-        grids[i][j] === grids[i - 4][j + 4]
-      ) {
-        return grids[i][j];
-      }
-    }
+//检查列是否有五个相同的棋子
+function checkCol(row,col,color,grids,size) { 
+  let count = 1;
+  let x = row - 1,
+      y = row + 1;
+  while (x >= 0 && grids[x][col] === color) {
+    count++;
+    x--;
   }
+  while (y < size && grids[y][col] === color) {
+    count++;
+    y++;
+  }
+  return count >= 5;
+}
 
-  // 如果没有获胜方，返回null
-  return null;
+// 检查左上到右下斜线是否有五个相同的棋子
+function checkLeftTopToRightBottom(row,col,color,grids,size) {
+  let count = 1;
+  let x = row - 1,
+      y = row + 1,
+      a = col - 1,
+      b = col + 1;
+  while (x >= 0 && a >= 0 && grids[x][a] === color) {
+    count++;
+    x--;
+    a--;
+  }
+  while (y < size && b < size && grids[y][b] === color) {
+    count++;
+    y++;
+    b++;
+  }
+  return count >= 5;
+}
+
+// 检查右上到左下斜线是否有五个相同的棋子
+function checkRightTopToLeftBottom(row,col,color,grids,size) {
+  let count = 1,
+  x = row - 1,
+  y = row + 1,
+  a = col + 1,
+  b = col - 1;
+  while (x >= 0 && a < size && grids[x][a] === color) {
+    count++;
+    x--;
+    a++;
+  }
+  while (y < size && b >= 0 && grids[y][b] === color) {
+    count++;
+    y++;
+    b--;
+  }
+  return count >= 5;
 }

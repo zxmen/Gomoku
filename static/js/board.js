@@ -37,7 +37,7 @@ export class Board {
     this.grids[rowIndex][colIndex] = color;
     //创建棋子
     this.createChess(rowIndex,colIndex,color);
-    const isGameOver = checkWin(this.grids);
+    const isGameOver = checkWin(rowIndex,colIndex,color,this.grids,this.size);
     if (isGameOver) {
       this.isGameOver = true;
       alert(`${color}获胜`)  
@@ -55,9 +55,12 @@ export class Board {
   createChess(rowIndex,colIndex,color) {
     const chess = createHtmlElement("div", "chess");
     console.log(rowIndex,colIndex,color);
-    chess.style.backgroundColor = color;
-    chess.style.left = colIndex*50 + "px";
-    chess.style.top = rowIndex*50 + "px";
+    // chess.style.backgroundColor = color;
+    // chess.style.left = colIndex*50 + "px";
+    // chess.style.top = rowIndex*50 + "px";
+    // chess.style.cssText = `left:${colIndex*50}px;top:${rowIndex*50}px;background-color:${color};box-shadow: 0 0 0 2px ${color};`;
+    // chess.style.cssText = `left:${colIndex*50}px;top:${rowIndex*50}px;background-color:${color}${color} === 'black' ?  background: radial-gradient(rgba(51, 51, 51, 0.6) 0%, rgba(51, 51, 51,0.7) 15%, rgba(255, 255, 255, 0.6) 20%, rgba(255, 255, 255, 1) 100%) : background: radial-gradient(rgba(255,255, 255, 1) 0%, rgba(255, 255, 255,0.7) 15%, rgba(255, 255, 255, 0.6) 10%, rgba(255, 255, 255, 1) 100%);`;
+    chess.style.cssText = `left:${colIndex*50}px;top:${rowIndex*50}px;background-color:${color};${color === 'black' ?  'background: radial-gradient(rgb(80 80 80), rgb(42 42 42), rgb(0, 0, 0) 10px)' : 'white'};`;
     this.container.appendChild(chess);
     return chess;
   }
