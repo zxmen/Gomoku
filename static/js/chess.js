@@ -1,5 +1,3 @@
-export function createChess(color) {
-  const chess = document.createElement("div");
-  chess.className = color;
-  return chess;
-}
+export const BLACK = 1;
+export const WHITE = 2;
+export const NONE = 0;

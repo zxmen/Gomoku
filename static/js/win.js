@@ -1,7 +1,8 @@
 export function checkWin(grids) {
+	console.log(grids);
   // 检查横向
-  for (let i = 0; i < 15; i++) {
-    for (let j = 0; j <= 10; j++) {
+  for (let i = 0; i < 14; i++) {
+    for (let j = 0; j <= 9; j++) {
       if (
         grids[i][j] !== null &&
         grids[i][j] === grids[i][j + 1] &&
