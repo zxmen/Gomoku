@@ -1,4 +1,4 @@
-export function checkWin(row,col,color,grids,size) {
+export function checkWinner(row,col,color,grids,size) {
   if (checkRow(row,col,color,grids,size) || checkCol(row,col,color,grids,size) || checkLeftTopToRightBottom(row,col,color,grids,size) || checkRightTopToLeftBottom(row,col,color,grids,size)) {
     return true;
   }
