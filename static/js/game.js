@@ -1,27 +1,30 @@
 import { Board } from "./board.js";
 import { Player } from "./player.js";
+import { Menu } from "./menu.js";
 
 export class Game {
-	constructor(size, container) {
+	constructor(size, container, menu) {
 		this.board = new Board(size, container);
+		this.menu = new Menu(menu);
 		this.players = [
-			new Player("Player 1", "black"),
-			new Player("Player 2", "white"),
+			new Player("Player 1", "black", 1),
+			new Player("Player 2", "white", 2),
 		];
 		this.currentPlayerIndex = 0;
-		this.isGameOver = false;
+		// this.isGameOver = false;
 	}
 
 	init() {
-		this.board.render();
+		this.board.init();
+		this.menu.createMenu()
 		this.setupBoardEventListener();
+		// this.settingsEventListener()
 	}
 
 	setupBoardEventListener() {
+		//下棋
 		this.board.container.addEventListener("click", (event) => {
       let rowIndex,colIndex
-			console.log(event);
-			console.log(event.target);
 			//有可能点击了棋盘的边框。这时候targetGrid是null
 			const targetGrid = event.target.closest(".grid");
 			// if (event.offsetX > event.target.clientWidth / 2) {
@@ -49,25 +52,34 @@ export class Game {
 					rowIndex += 1;
 				}
 			}
-      console.log(rowIndex,colIndex)
+      // console.log(rowIndex,colIndex)
+			//落子
 			const isMoveValid = this.board.placeMove(
 				rowIndex,
 				colIndex,
-				this.players[this.currentPlayerIndex].color
+				this.players[this.currentPlayerIndex]
 			);
-			if (isMoveValid) {
-				// this.board.render();
-				if (this.isGameOver) {
-					alert(
-						`Game over! ${this.players[this.currentPlayerIndex].name} wins!`
-					);
-				} else {
-					this.currentPlayerIndex =
-						(this.currentPlayerIndex + 1) % this.players.length;
-				}
-			} else {
-				alert("Invalid move! Please try again.");
+			console.log(isMoveValid);
+			if ('keepPlaying' === isMoveValid) {
+				this.currentPlayerIndex =
+				(this.currentPlayerIndex + 1) % this.players.length;
 			}
-		});
+			if ('repeat' === isMoveValid) {
+				alert("Invalid move! Please try again.");
+			}	
+			if ('gameOver' === isMoveValid) {
+				this.menu.start.textContent = "重新开始";
+				this.board.lock();
+			}
+		},);
+
+		//第一次点击是开始游戏，第二次点击是重置游戏
+		this.menu.start.addEventListener("click", () => {
+			//第一次点击是开始游戏。应该省去reset的步骤
+			if (this.menu.start.textContent === "重新开始") {
+				this.board.reset();
+			}
+			this.board.unlock();
+		})
 	}
 }

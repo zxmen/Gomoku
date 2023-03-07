@@ -1,5 +1,11 @@
-export function checkWinner(row,col,color,grids,size) {
-  if (checkRow(row,col,color,grids,size) || checkCol(row,col,color,grids,size) || checkLeftTopToRightBottom(row,col,color,grids,size) || checkRightTopToLeftBottom(row,col,color,grids,size)) {
+export function checkWinner(row,col,grids) {
+  console.log(grids);
+  const size = grids.length;
+  const color = grids[row][col];
+  if (checkRow(row,col,color,grids,size) || checkCol(row,col,color,grids,size) || checkDiagonal(row,col,color,grids,size)) {
+    console.log('checkRow: '+Boolean(checkRow(row,col,color,grids,size)));
+    console.log('checkCol: '+Boolean(checkCol(row,col,color,grids,size)));
+    console.log('checkDiagonal: '+Boolean(checkDiagonal(row,col,color,grids,size)));
     return true;
   }
   return false;
@@ -7,72 +13,76 @@ export function checkWinner(row,col,color,grids,size) {
 
 //检查行是否有五个相同的棋子
 function checkRow(row,col,color,grids,size) {
-  let count = 1;
   let x = col - 1,
       y = col + 1;
   while (x >= 0 && grids[row][x] === color) {
-    count++;
     x--;
   }
   while (y < size && grids[row][y] === color) {
-    count++;
     y++;
   }
-  return count >= 5;
+  return y-1 - (x+1) >= 4;
 }
 
 //检查列是否有五个相同的棋子
 function checkCol(row,col,color,grids,size) { 
-  let count = 1;
   let x = row - 1,
       y = row + 1;
   while (x >= 0 && grids[x][col] === color) {
-    count++;
     x--;
   }
-  while (y < size && grids[y][col] === color) {
-    count++;
+  while (y <= size && grids[y][col] === color) {
     y++;
   }
-  return count >= 5;
+  console.log('row: '+row+' col: '+col+' x: '+x+' y: '+y);
+  return y-1 - (x+1) >= 4;
 }
 
-// 检查左上到右下斜线是否有五个相同的棋子
-function checkLeftTopToRightBottom(row,col,color,grids,size) {
-  let count = 1;
-  let x = row - 1,
-      y = row + 1,
-      a = col - 1,
-      b = col + 1;
-  while (x >= 0 && a >= 0 && grids[x][a] === color) {
-    count++;
-    x--;
-    a--;
+
+//检查斜线是否有五个相同的棋子
+function checkDiagonal(row,col,color,grids,size) {
+  const directions = [
+    { x: -1, y: -1, count: 0 },
+    { x: 1, y: 1, count: 0 },
+    { x: -1, y: 1, count: 0 },
+    { x: 1, y: -1, count: 0 }
+  ];
+  
+  for (let dir of directions) {
+    let r = row + dir.x;
+    let c = col + dir.y;
+
+    while (r >= 0 && r < size && c >= 0 && c < size && grids[r][c] === color) {
+      dir.count++;
+      r += dir.x;
+      c += dir.y;
+    }
   }
-  while (y < size && b < size && grids[y][b] === color) {
-    count++;
-    y++;
-    b++;
+  if (directions[0].count + directions[1].count >= 4 || directions[2].count + directions[3].count >= 4) {
+    console.log('diagonal');
+    return true;
   }
-  return count >= 5;
+  return false;
 }
 
-// 检查右上到左下斜线是否有五个相同的棋子
-function checkRightTopToLeftBottom(row,col,color,grids,size) {
-  let count = 1,
-  x = row - 1,
-  y = row + 1,
-  a = col + 1,
-  b = col - 1;
-  while (x >= 0 && a < size && grids[x][a] === color) {
-    count++;
-    x--;
-    a++;
+
+
+
+
+export class Win {
+  constructor() {
+    this.winner = document.querySelector('.winner');
+    this.winnerColor = document.querySelector('.winner-color');
   }
-  while (y < size && b >= 0 && grids[y][b] === color) {
-    count++;
-    y++;
-    b--;
+
+  showWinner(color) {
+    this.winnerColor.textContent = `${color}`;
+    this.winner.style.display = 'block';
+    setTimeout(() => {
+      this.winner.style.opacity = 0;
+      this.winner.addEventListener('transitionend', () => {
+        this.winner.style.display = 'none';
+      }, { once: true });
+    }, 2000);
   }
-  return count >= 5;
 }

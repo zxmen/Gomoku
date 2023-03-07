@@ -1,5 +1,5 @@
 import { createHtmlElement } from "./utils.js";
-import { checkWinner } from "./win.js";
+import { checkWinner,Win } from "./win.js";
 import { Chess } from "./chess.js";
 
 export class Board {
@@ -8,14 +8,19 @@ export class Board {
     this.container = container;
     //预留棋子的位置
     this.grids = [];
-    this.chess = new Chess();
+    this.chess = new Chess(container);
+    this.win = new Win();
   }
 
+  init() {
+    this.render();
+    this.lock()
+  }
   render() {
     for (let i = 0; i <= this.size; i++) {
       this.grids[i] = [];
       for (let j = 0; j <= this.size; j++) {
-        this.grids[i][j] = null;
+        this.grids[i][j] = 0;
         //棋盘的每个格子
         if (i < this.size && j < this.size) {
           const grid = document.createElement("div");
@@ -28,37 +33,52 @@ export class Board {
     }
   }
 
-  placeMove(rowIndex, colIndex, color) {
-    //this.grids填入颜色
+  //锁定棋盘
+  lock() {
+    let lock = createHtmlElement("div", "lock");
+    lock.style.cssText = `width: 100%;height: 100%;position: absolute;top: 0;left: 0;z-index: 1000;`;
+    console.log(lock);
+    this.container.appendChild(lock);
+  }
 
+  //解锁棋盘
+  unlock() {
+    let lock = document.querySelector(".lock");
+    lock.remove();
+  }
+
+  placeMove(rowIndex, colIndex, player) {
+    let color = player.color;
+    //this.grids填入颜色
+    console.log('placeMove');
     if (this.grids[rowIndex][colIndex]) {
       console.log(rowIndex, colIndex);
       console.log('重复')
-      return false;
+      return 'repeat';
     }
-    this.grids[rowIndex][colIndex] = color;
+    this.grids[rowIndex][colIndex] = player.index;
     //创建棋子
     this.chess.createChess(rowIndex,colIndex,color);
-    const isGameOver = checkWinner(rowIndex,colIndex,color,this.grids,this.size);
+
+    // this.checkWinner.insert(rowIndex, colIndex, color);
+
+    // const isGameOver = this.checkWinner.check(rowIndex, colIndex, this.grids);
+    console.log(this.grids);
+    const isGameOver = checkWinner(rowIndex, colIndex, this.grids);
     if (isGameOver) {
       this.isGameOver = true;
-      alert(`${color}获胜`)  
+      this.win.showWinner(color);
+      return 'gameOver';
     }
-    return true;
+    return 'keepPlaying';
   }
 
-  // switchPlayer() {
-  //   this.currentPlayerSymbol = this.currentPlayerSymbol === "x" ? "o" : "x";
-  //   const playerElement = document.querySelector(".current-player");
-  //   playerElement.textContent = this.currentPlayerSymbol.toUpperCase();
-  // }
-
-  // //创建棋子
-  // createChess(rowIndex,colIndex,color) {
-  //   const chess = createHtmlElement("div", "chess");
-  //   console.log(rowIndex,colIndex,color);
-  //   chess.style.cssText = `left:${colIndex*50}px;top:${rowIndex*50}px;background-color:${color};${color === 'black' ?  'background: radial-gradient(rgb(80 80 80), rgb(42 42 42), rgb(0, 0, 0) 10px)' : 'white'};`;
-  //   this.container.appendChild(chess);
-  //   return chess;
-  // }
+  reset() {
+    this.grids.forEach((row, rowIndex) => {
+      row.forEach((col, colIndex) => {
+        this.grids[rowIndex][colIndex] = 0;
+      });
+    })
+    this.isGameOver = false;
+  }
 }
