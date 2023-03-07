@@ -8,6 +8,16 @@ export class Board {
     this.container = container;
     //预留棋子的位置
     this.grids = [];
+    //创建封锁棋盘的div
+    this.lockBoard = createHtmlElement("div", "lock");
+    this.lockBoard.style.cssText = `width: 100%;height: 100%;position: absolute;top: 0;left: 0;z-index: 1000;display: none;`;
+    //遮住.board，e.stopPropagation()防止点击.lock后冒泡到.board
+    this.lockBoard.addEventListener("click", (e) => {
+      e.stopPropagation();
+      alert("请开始游戏");
+    });
+    this.container.appendChild(this.lockBoard);
+
     this.chess = new Chess(container);
     this.win = new Win();
   }
@@ -35,16 +45,12 @@ export class Board {
 
   //锁定棋盘
   lock() {
-    let lock = createHtmlElement("div", "lock");
-    lock.style.cssText = `width: 100%;height: 100%;position: absolute;top: 0;left: 0;z-index: 1000;`;
-    console.log(lock);
-    this.container.appendChild(lock);
+    this.lockBoard.style.display = "block";
   }
 
   //解锁棋盘
   unlock() {
-    let lock = document.querySelector(".lock");
-    lock.remove();
+    this.lockBoard.style.display = "none";
   }
 
   placeMove(rowIndex, colIndex, player) {
@@ -79,6 +85,14 @@ export class Board {
         this.grids[rowIndex][colIndex] = 0;
       });
     })
+    this.clearChess();
     this.isGameOver = false;
+  }
+
+  clearChess() {
+    const chessElements = document.querySelectorAll('.chess');
+    chessElements.forEach((element) => {
+      element.parentNode.removeChild(element);
+    });
   }
 }

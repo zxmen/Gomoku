@@ -24,6 +24,7 @@ export class Game {
 	setupBoardEventListener() {
 		//下棋
 		this.board.container.addEventListener("click", (event) => {
+			event.stopPropagation()
       let rowIndex,colIndex
 			//有可能点击了棋盘的边框。这时候targetGrid是null
 			const targetGrid = event.target.closest(".grid");
